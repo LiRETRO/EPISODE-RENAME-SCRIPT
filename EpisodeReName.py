@@ -41,7 +41,7 @@ def get_season_and_ep(file_path):
     # 获取文件名和后缀
     file_name, ext = get_file_name_ext(file_full_name)
 
-    _ = get_season_cascaded(parent_folder_path)
+    # _ = get_season_cascaded(parent_folder_path)
     if not _:
         # logger.info(f"{'不在season文件夹内 忽略'}")
         return None, None
@@ -53,10 +53,10 @@ def get_season_and_ep(file_path):
 
     season = get_season_cascaded(parent_folder_path)
 
-    # 获取不到季数 退出
+    # 获取不到季数，一般是第一季
     if not season:
         return None, None
-
+        # season = str(1).zfill(2)
     # 根据文件名获取集数
 
     # 特殊文件名使用配置的匹配规则
@@ -93,19 +93,19 @@ def get_season_and_ep(file_path):
     # 内容
     patterns = [
         # 1到4位数字
-        '(\d{1,4}(\.5)?)',
+        r'(\d{1,4}(\.5)?)',
         # 特殊文字处理
-        '第(\d{1,4}(\.5)?)集',
-        '第(\d{1,4}(\.5)?)话',
-        '第(\d{1,4}(\.5)?)話',
-        '[Ee][Pp](\d{1,4}(\.5)?)',
-        '[Ee](\d{1,4}(\.5)?)',
+        r'第(\d{1,4}(\.5)?)集',
+        r'第(\d{1,4}(\.5)?)话',
+        r'第(\d{1,4}(\.5)?)話',
+        r'[Ee][Pp](\d{1,4}(\.5)?)',
+        r'[Ee](\d{1,4}(\.5)?)',
         # 兼容SP01等命名
-        '[Ss][Pp](\d{1,4}(\.5)?)',
+        r'[Ss][Pp](\d{1,4}(\.5)?)',
         # 兼容v2命名
-        '(\d{1,4}(\.5)?)[Vv]?\d?',
+        r'(\d{1,4}(\.5)?)[Vv]?\d?',
         # 兼容END命名
-        '(\d{1,4}(\.5)?)\s?(?:_)?(?i:END)?',
+        r'(\d{1,4}(\.5)?)\s?(?:_)?(?i:END)?',
     ]
     # 括号和内容组合起来
     pats = []
@@ -140,7 +140,7 @@ def get_season_and_ep(file_path):
         if not ep:
             # 部分资源命名
             # 找 第x集
-            pat = '第(\d{1,4}(\.5)?)[集话話]'
+            pat = r'第(\d{1,4}(\.5)?)[集话話]'
             for y in res:
                 y = y.strip()
                 res_sub = re.search(pat, y)
@@ -149,7 +149,7 @@ def get_season_and_ep(file_path):
                     break
         if not ep:
             # 找 EPXX
-            pat = '[Ee][Pp](\d{1,4}(\.5)?)'
+            pat = r'[Ee][Pp](\d{1,4}(\.5)?)'
             for y in res:
                 y = y.strip()
                 res_sub = re.search(pat, y.upper())
@@ -160,7 +160,7 @@ def get_season_and_ep(file_path):
         # 特殊命名 SExx.xx 第2季第10集 SE02.10
         if not ep:
             # logger.info(f"{'找 EXX'}")
-            pat = '[Ss][Ee](\d{1,2})\.(\d{1,2})'
+            pat = r'[Ss][Ee](\d{1,2})\.(\d{1,2})'
             for y in res:
                 y = y.strip()
                 res_sub = re.search(pat, y.upper())
@@ -172,7 +172,7 @@ def get_season_and_ep(file_path):
         # 特殊命名 Sxx.xx 第2季第10集 s02.10
         if not ep:
             # logger.info(f"{'找 EXX'}")
-            pat = '[Ss](\d{1,2})\.(\d{1,2})'
+            pat = r'[Ss](\d{1,2})\.(\d{1,2})'
             for y in res:
                 y = y.strip()
                 res_sub = re.search(pat, y.upper())
@@ -184,7 +184,7 @@ def get_season_and_ep(file_path):
         # 匹配顺序调整
         if not ep:
             # logger.info(f"{'找 EXX'}")
-            pat = '[Ee](\d{1,4}(\.5)?)'
+            pat = r'[Ee](\d{1,4}(\.5)?)'
             for y in res:
                 y = y.strip()
                 res_sub = re.search(pat, y.upper())
@@ -203,7 +203,7 @@ def get_season_and_ep(file_path):
             # 13.5
             # 10v2
             # 10.5v2
-            pat = '(\d{1,4}(\.5)?)[Vv]?\d?'
+            pat = r'(\d{1,4}(\.5)?)[Vv]?\d?'
             ep = None
             res_sub = re.search(pat, s)
             if res_sub:
@@ -212,7 +212,7 @@ def get_season_and_ep(file_path):
                 return ep
 
             # 兼容END命名
-            pat = '(\d{1,4}(\.5)?)\s?(?:_)?(?i:END)?'
+            pat = r'(\d{1,4}(\.5)?)\s?(?:_)?(?i:END)?'
             ep = None
             res_sub = re.search(pat, s)
             if res_sub:
@@ -220,7 +220,7 @@ def get_season_and_ep(file_path):
                 ep = res_sub.group(1)
                 return ep
 
-            pat = '\d{1,4}(\.5)?$'
+            pat = r'\d{1,4}(\.5)?$'
             res_sub = re.search(pat, s)
             if res_sub:
                 logger.info(f'{res_sub}')

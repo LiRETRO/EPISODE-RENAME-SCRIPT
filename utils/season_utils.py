@@ -25,6 +25,7 @@ def file_name_matcher(file_name, force_rename = False):
     if res:
         season, ep = res[0][0], res[0][1]
         return season, ep
+    # 匹配中文
     pattern = r'第([\u4e00-\u9fa5\d]+)季.*?(?<!\d)(\d{1,4})(?!\d)'
     match = re.search(pattern, file_name)
     if match:
@@ -33,6 +34,7 @@ def file_name_matcher(file_name, force_rename = False):
             season = chinese_num_map.get(season, None)
         ep = match.group(2)  # 集数
         return season, ep
+    return None, None
 
 def get_season(parent_folder_name):
     """
