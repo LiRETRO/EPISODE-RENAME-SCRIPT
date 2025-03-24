@@ -41,7 +41,7 @@ def get_season_and_ep(file_path):
     # 获取文件名和后缀
     file_name, ext = get_file_name_ext(file_full_name)
 
-    # _ = get_season_cascaded(parent_folder_path)
+    _ = get_season_cascaded(parent_folder_path)
     if not _:
         # logger.info(f"{'不在season文件夹内 忽略'}")
         return None, None
